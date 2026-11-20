@@ -1,0 +1,7 @@
+* NGSPICE file created from invx1fingered.ext - technology: sky130A
+
+.subckt invx1fingered in out vdd vss
+X0 out in vss vss sky130_fd_pr__nfet_01v8 ad=0.189 pd=1.74 as=0.189 ps=1.74 w=0.42 l=0.15
+X1 out in vdd vdd sky130_fd_pr__pfet_01v8 ad=0.2805 pd=1.51 as=0.33 ps=2.32 w=0.66 l=0.15 M=2
+.ends
+

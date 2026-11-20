@@ -1,0 +1,5 @@
+* Inverter Subcircuit (INVX2)
+.subckt inv_x2 a vdd vss z
+xm01 z a vdd vdd sky130_fd_pr__pfet_01v8 l=0.15 w=2.64 as=0.792 ad=0.792 ps=5.88 pd=5.88
+xm02 z a vss vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.84 as=0.252 ad=0.252 ps=2.28 pd=2.28
+.ends

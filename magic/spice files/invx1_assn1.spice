@@ -1,0 +1,10 @@
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+
+.subckt invx1 in out Vdd Vss
+* PMOS: W = 1.32u, L = 0.15u
+xm01 out in Vdd Vdd sky130_fd_pr__pfet_01v8 l=0.15 w=1.32 as=0.396 ad=0.396 ps=3.24 pd=3.24
+* NMOS: W = 0.42u, L = 0.15u
+xm02 out in Vss Vss sky130_fd_pr__nfet_01v8 l=0.15 w=0.42 as=0.126 ad=0.126 ps=1.44 pd=1.44
+.ends
+

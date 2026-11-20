@@ -1,0 +1,65 @@
+* NGSPICE testbench for Extracted Inverter
+.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+* --- Extracted Inverter Subcircuit ---
+.subckt min_inv in vdd vss out
+* NMOS (X0 from extraction)
+X0 out in vss vss sky130_fd_pr__nfet_01v8 ad=0.189p pd=1.74u as=0.189p ps=1.74u w=0.42 l=0.15
+* PMOS (X1 from extraction - Note: M=2 is captured here)
+X1 out in vdd vdd sky130_fd_pr__pfet_01v8 ad=0.2805p pd=1.51u as=0.33p ps=2.32u w=0.66 l=0.15 M=2
+
+* Parasitic Capacitances from Magic Extraction
+C0 vdd out 0.19448f
+C1 vdd in 0.13534f
+C2 in out 0.07329f
+C3 out vss 0.32223f
+C4 in vss 0.47335f
+C5 vdd vss 0.8476f
+.ends
+
+* --- Power Supply ---
+Vdd vdd 0 DC 1.8
+
+* --- Transient Testbench ---
+V_tran in_t 0 pulse(0 1.8 100p 20p 20p 1n 2n)
+
+* DUT & Load (Using the extracted subcircuit)
+Xinv_t in_t vdd 0 out_t min_inv
+Xinv_load out_t vdd 0 out2 min_inv
+
+* --- DC Sweep Testbench ---
+V_dc in_dc 0 DC 0
+Xinv_dc in_dc vdd 0 out_dc min_inv
+
+.control
+    * PART A: TRANSIENT ANALYSIS
+    tran 1ps 4ns
+    plot v(in_t)+4 v(out_t)+8 v(out2)+12 title "Transient Response (Extracted)"
+
+    * Measure delays
+    meas tran drise TRIG v(out_t) VAL=0.18 RISE=1 TARG v(out_t) VAL=1.62 RISE=1
+    meas tran dfall TRIG v(out_t) VAL=1.62 FALL=1 TARG v(out_t) VAL=0.18 FALL=1
+    meas tran tplh TRIG v(in_t) VAL=0.9 FALL=1 TARG v(out_t) VAL=0.9 RISE=1
+    meas tran tphl TRIG v(in_t) VAL=0.9 RISE=1 TARG v(out_t) VAL=0.9 FALL=1
+
+    let drise_ps = drise * 1e12
+    let dfall_ps = dfall * 1e12
+    let tplh_ps = tplh * 1e12
+    let tphl_ps = tphl * 1e12
+
+    * PART B: DC SWEEP ANALYSIS
+    dc V_dc 0 1.8 0.001
+    plot v(out_dc) vs v(in_dc) title "VTC (Extracted)"
+
+    let slope = deriv(v(out_dc))
+    let diff = v(out_dc) - v(in_dc)
+    meas dc VM FIND v(in_dc) WHEN diff=0
+    meas dc VIL FIND v(in_dc) WHEN slope=-1 CROSS=1
+    meas dc VIH FIND v(in_dc) WHEN slope=-1 CROSS=last
+
+    * PART C: RESULTS
+    echo "Results for Extracted Inverter:"
+    print drise_ps dfall_ps tplh_ps tphl_ps
+    print VM VIL VIH
+.endc
+.end

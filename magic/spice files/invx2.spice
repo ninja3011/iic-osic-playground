@@ -1,0 +1,15 @@
+* NGSPICE file created from invx2.ext - technology: sky130A
+
+* Corrected INVX2 Subcircuit
+* Technology: sky130A
+* Pin Order: A (input), Z (output), VDD (power), VSS (ground)
+
+.subckt invx2 A Z VDD VSS
+* NMOS: Width 0.42, Multiplier 2 (Effective W=0.84)
+X0 Z A VSS VSS sky130_fd_pr__nfet_01v8 L=0.15 W=0.42 M=2
++ ad=0.126 pd=1.44 as=0.0882 ps=0.84 
+
+* PMOS: Width 0.66, Multiplier 4 (Effective W=2.64)
+X1 Z A VDD VDD sky130_fd_pr__pfet_01v8 L=0.15 W=0.66 M=4
++ ad=0.1089 pd=0.99 as=0.1386 ps=1.08
+.ends
